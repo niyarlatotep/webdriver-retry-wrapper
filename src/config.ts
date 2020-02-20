@@ -43,6 +43,9 @@ export class Config {
         return config.get<string>('seleniumHubUrl');
     }
     static get webDriverProxy(){
+        if (!config.has('webDriverProxy')){
+            return '';
+        }
         return config.get<string>('webDriverProxy');
     }
 }
