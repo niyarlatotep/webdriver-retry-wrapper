@@ -1,0 +1,4 @@
+{
+  "directConnect": true,
+  "seleniumHubUrl" : "http://<selenium-hub>:4444/wd/hub"
+}
