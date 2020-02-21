@@ -21,6 +21,7 @@ enum TimeConstants  {
     Zero = 0,
     QuaterASecond = 250,
     HalfASecond = 500,
+    TwoSeconds = 2000,
     FiveSeconds = 5000,
     TenSeconds = 10000,
     HalfAMinute= 30000,
@@ -223,6 +224,27 @@ class Element {
             }
         }
         throw currentException;
+    }
+    async clickAnimated(){
+        function waitForElementPositionStable(){
+            const timeout = 2000;
+            const startDate = +new Date();
+            const element  = arguments[0];
+            let previousLocation = element?.getBoundingClientRect();
+            return new Promise((resolve, reject)=>{
+                setInterval(()=>{
+                    const rect = element?.getBoundingClientRect();
+                    if (rect?.x === previousLocation?.x && rect?.y === previousLocation?.y){
+                        resolve();
+                    } else {
+                        if ((+new Date()) - startDate > timeout) reject(`Previous: ${previousLocation?.x} ${previousLocation?.y}, Current ${rect?.x}, ${rect?.y}`);
+                        previousLocation = rect;
+                    }
+                }, 10);
+            });
+        }
+        await this._webDriver.retryExecuteScript(waitForElementPositionStable, await this.retryGetElement());
+        await this.click();
     }
     async clickTillAttributeEqual(name: string, value: string){
         const preservedStack = getCleanStack(new Error().stack);
@@ -579,5 +601,7 @@ export {
     element,
     Element,
     ChainedElementAll,
-    ElementAll
+    ElementAll,
+    timeoutCondition,
+    TimeConstants
 }
